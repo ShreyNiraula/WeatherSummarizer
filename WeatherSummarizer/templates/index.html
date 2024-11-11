@@ -12,6 +12,17 @@
     </header>
 
     <div class="content">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div id="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
         <!-- Display Weather Data -->
         <section id="weather-data">
             <h2>Weather Forecast</h2>
@@ -73,5 +84,16 @@
     <footer>
         <p>&copy; 2024 Weather Alert App. All Rights Reserved.</p>
     </footer>
+    <script>
+        // Set a timeout for flash messages to disappear after 5 seconds
+        setTimeout(() => {
+            const flashMessages = document.querySelectorAll('.flash');
+            flashMessages.forEach((message) => {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => message.remove(), 500); // Remove the message after fade-out
+            });
+        }, 2500); // 5 seconds delay before fade-out
+    </script>
 </body>
 </html>

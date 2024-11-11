@@ -1,6 +1,7 @@
 import requests
 
-
+# TODO: make location user input? and change timezone as well?
+# TODO: change forecast_days variable?
 # Open-Meteo API endpoint and parameters
 url = "https://api.open-meteo.com/v1/forecast"
 params = {

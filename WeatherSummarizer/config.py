@@ -7,3 +7,4 @@ load_dotenv()  # This will automatically look for a .env file in the root direct
 class Config:
     # Access the environment variable using os.getenv
     GENAI_API_KEY = os.getenv('GENAI_API_KEY')  # Will return None if not set
+    SECRET_KEY = os.urandom(24)
