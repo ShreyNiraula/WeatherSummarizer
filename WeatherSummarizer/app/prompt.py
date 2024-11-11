@@ -1,31 +1,35 @@
+import json
 import google.generativeai as genai
 from config import Config
 
 # Function to analyze weather data using ChatGPT
 def analyze_weather(data):
-    # Extract relevant information from API response
-    hourly_data = data.get("hourly", {})
-    precipitation_probabilities = hourly_data.get("precipitation_probability", [])
-    rain_values = hourly_data.get("rain", [])
-    wind_speeds = hourly_data.get("wind_speed_10m", [])
+    n_hourly_data = len(data.get("hourly", {}))
 
-    # Formulate prompt for ChatGPT API
     prompt = f"""
-    Given the following weather data prediction for today:
-    - Precipitation probabilities over the next few hours: {precipitation_probabilities}
-    - Rain values over the next few hours: {rain_values}
-    - Wind speeds over the next few hours: {wind_speeds}
+    Input:
+    This JSON contains current weather data under the 'current' key and an hourly forecast for the next {n_hourly_data} hours under the 'hourly' key. Aggregated daily forecasts for today and tomorrow are also included.
+    {data}
 
-    Determine if there is a high chance of heavy rainfall or hurricane conditions. If so, explain why and suggest alerting users.
-    Also, give suggestion within 100 words.
+    Output:
+    Create a JSON response with three keys:
+
+    1. **text**: A short summary (within 100 words) describing the current weather and upcoming forecast. Include mentions of high chances of severe weather, such as rainfall, hurricanes, or any significant warnings. If there are alert signals, specify and briefly explain them.
+
+    2. **alert**: A boolean set to `true` if any conditions require user alert, such as heavy rainfall, strong winds, extreme heat, or other adverse weather. Set it to `false` otherwise.
+
+    3. **alert_msg**: A brief message (within 50 words) advising on any severe weather and providing recommendations for user safety.
+
+    Ensure that the response is valid JSON format only.
     """
 
     generation_config = {
-        "temperature": 1,
-        "top_p": 0.95,
+        "temperature": 0.9,
+        "top_p": 0.9,
         "top_k": 40,
         "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
+        # "response_mime_type": "text/plain",
+        "response_mime_type": "application/json",
     }
     model = genai.GenerativeModel(
         model_name="gemini-1.5-flash",
@@ -36,4 +40,17 @@ def analyze_weather(data):
     )
     response = chat_session.send_message(prompt)
 
-    return prompt, response.text
+    # Try to parse the response as JSON
+    try:
+        parsed_response = json.loads(response.text)
+        # If parsing is successful, you can use the parsed JSON here
+        print(parsed_response)
+    except json.JSONDecodeError as e:
+        print(f"Error parsing JSON: {e}")
+        parsed_response = {
+            "text": "Unable to parse the response from genai",
+            "alert": False,
+            "alert_msg": "",
+        }
+
+    return prompt, parsed_response
