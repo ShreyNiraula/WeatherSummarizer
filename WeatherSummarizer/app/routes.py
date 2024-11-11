@@ -3,10 +3,7 @@ from app.weather import fetch_weather_data
 from app.prompt import analyze_weather
 from app.database import save_user_to_db, get_all_subscribers
 from app.alert import send_alert_to_users
-
-# Initialize the blueprint (if using Blueprints in the future)
-# from flask import Blueprint
-# weather_blueprint = Blueprint('weather', __name__)
+from config import Config
 
 # API endpoint to fetch weather data and analyze it
 def get_weather():
@@ -59,8 +56,18 @@ def trigger_alert():
     weather_data = fetch_weather_data()
     _, analysis = analyze_weather(weather_data)
 
-    if "heavy rainfall" in analysis.lower() or "hurricane" in analysis.lower():
-        send_alert_to_users(analysis)
-        return jsonify({"message": "Alert triggered successfully!"})
+    alert_msg = analysis['alert_msg']
+
+    if "heavy rainfall" in alert_msg.lower() or "hurricane" in alert_msg.lower():
+        try:
+            send_alert_to_users(alert_msg)
+        except Exception as e:
+            # flash('Error Triggering email', 'danger')
+            return redirect(url_for('get_weather'))
+
+        finally:
+            return redirect(url_for('get_weather'))
     else:
-        return jsonify({"message": "No alert needed."})
+        print("Safe weather, no alert!!")
+        return redirect(url_for('get_weather'))
+

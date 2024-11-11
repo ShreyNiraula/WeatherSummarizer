@@ -1,30 +1,41 @@
 from app.database import get_all_subscribers
-import sendgrid
-from sendgrid.helpers.mail import Mail, Email, To, Content
+import smtplib
+from email.message import EmailMessage
+import os
 
 
-# Function to send alert to users using SendGrid
 def send_alert_to_users(alert_message):
-    subscribers = get_all_subscribers()
+        subscribers = get_all_subscribers()
 
-    # SendGrid API key (replace with your own API key from SendGrid)
-    sendgrid_api_key = "your_sendgrid_api_key"
+        sender_email = os.getenv('SENDER_EMAIL')
+        sender_password = os.getenv('EMAIL_KEY')
 
-    sg = sendgrid.SendGridAPIClient(api_key=sendgrid_api_key)
+        for subscriber in subscribers:
+            recipient_email = subscriber[0]
+            recipient_username = subscriber[1]
+            try:
+                email = EmailMessage()
+                email['Subject'] = "Weather Alert Notification"
+                email['From'] = sender_email
+                email['To'] = recipient_email
 
-    for subscriber in subscribers:
-        recipient_email = subscriber[0]  # Assuming email is in the first column of your DB
-        try:
-            from_email = Email("nshrey53@gmail.com")  # Replace with your verified email
-            to_email = To(recipient_email)
-            subject = "Weather Alert Notification"
-            content = Content("text/plain", alert_message)
+                full_email = f"""
+                Dear {recipient_username},
+                
+                {alert_message}
+                
+                Regards,
+                WeatherSummarizer Team
+                """
+                email.set_content(full_email)
 
-            # Create email and send
-            mail = Mail(from_email, to_email, subject, content)
-            response = sg.send(mail)
+                with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+                    smtp.starttls()
+                    smtp.login(sender_email, sender_password)
+                    smtp.send_message(email)
+                    # Output confirmation message
+                    print(f"Email sent to {recipient_username} ({recipient_email})")
 
-            print(f"Alert sent to {recipient_email}: {alert_message}")
-            print(response.status_code, response.body, response.headers)
-        except Exception as e:
-            print(f"Error sending email to {recipient_email}: {str(e)}")
+            except Exception as e:
+                print(f"email error for recipient: {recipient_email}")
+                raise

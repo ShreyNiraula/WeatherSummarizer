@@ -1,6 +1,6 @@
 import json
 import google.generativeai as genai
-from config import Config
+
 
 # Function to analyze weather data using ChatGPT
 def analyze_weather(data):
