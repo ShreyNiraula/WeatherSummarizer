@@ -6,6 +6,7 @@ venv/
 WeatherSummarizer/.env
 WeatherSummarizer/.idea
 WeatherSummarizer/.idea/*
+WeatherSummarizer/*.db
 
 # Python cache and compiled files
 *.pyc
