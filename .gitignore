@@ -1,0 +1,21 @@
+# Ignore virtual environments
+virtualenv/
+venv/
+
+# Ignore environment variables file inside Flask project
+WeatherSummarizer/.env
+WeatherSummarizer/.idea
+WeatherSummarizer/.idea/*
+
+# Python cache and compiled files
+*.pyc
+__pycache__/
+
+# Ignore other typical Python/Flask project files
+instance/
+.DS_Store
+*.pyo
+*.log
+*.sqlite3
+
+# Other files or folders you want to exclude
