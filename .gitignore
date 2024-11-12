@@ -9,6 +9,8 @@ WeatherSummarizer/.idea/*
 WeatherSummarizer/*.db
 ./.idea/*
 ./.idea/
+WeatherSummarizer/node_modules/
+
 
 # Python cache and compiled files
 *.pyc

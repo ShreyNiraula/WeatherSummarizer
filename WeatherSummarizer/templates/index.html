@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Alert App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+    <link href="/static/tailwind/styles.css" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -53,9 +54,12 @@
         </section>
 
         <!-- Display Analysis -->
-        <section id="analysis">
-            <h2>Weather Analysis</h2>
-            <p>{{ analysis }}</p>
+        <section id="analysis" class="flex flex-col justify-center bg-yellow-900">
+            <h2 class="flex">Weather Analysis</h2>
+            <div class="flex w-full ">
+                 <p>{{ analysis }}</p>
+            </div>
+           
         </section>
 
         <!-- Subscription Section -->
