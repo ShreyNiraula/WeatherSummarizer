@@ -18,4 +18,4 @@ app.add_url_rule('/subscribe', 'subscribe', subscribe, methods=['POST'])
 app.add_url_rule('/trigger_alert', 'trigger_alert', trigger_alert, methods=['POST'])
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(host='0.0.0.0', port=5001)
